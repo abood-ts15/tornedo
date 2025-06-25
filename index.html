@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>واجهة الشرطة</title>
+    <style>
+        body { font-family: 'Cairo', Arial, sans-serif; background: #000; color: #fff;}
+        .welcome-box {
+            max-width: 500px;
+            margin: 120px auto 0 auto;
+            background: #1a1a1a;
+            border-radius: 18px;
+            box-shadow: 0 4px 32px #0006;
+            padding: 48px 32px 32px 32px;
+            text-align: center;
+        }
+        .logo {
+            width: 120px;
+            margin-bottom: 24px;
+        }
+        .main-btn {
+            background: #1976d2;
+            color: #fff;
+            padding: 16px 44px;
+            font-size: 20px;
+            border-radius: 10px;
+            border: none;
+            font-weight: bold;
+            margin-top: 28px;
+            cursor: pointer;
+            transition: background 0.25s;
+        }
+        .main-btn:hover { background: #12509c; }
+    </style>
+</head>
+<body>
+    <div class="welcome-box" id="welcome">
+        <!-- ضع صورة اللوجو هنا -->
+        <img src="police-logo.png" alt="Police Logo" class="logo">
+        <h1>مرحبًا بك في نظام الشرطة</h1>
+        <p>
+            هذا النظام مخصص لإدارة رتب وأعضاء الشرطة.<br>
+            يرجى الضغط على الزر للدخول إلى الجدول.
+        </p>
+        <button class="main-btn" onclick="window.location.href='police.html'">ادخل إلى الجدول</button>
+    </div>
+</body>
+</html>

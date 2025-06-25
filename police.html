@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>البروتوكولات    </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Cairo', Tahoma, Arial, sans-serif;
+      background: #181d27;
+      color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+    .section {
+      max-width: 600px;
+      margin: 40px auto 0 auto;
+      background: #232943;
+      border-radius: 12px;
+      padding: 30px 18px 18px 18px;
+      box-shadow: 0 4px 20px #0005;
+    }
+    h2 {
+      color: #4faaff;
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 18px;
+      font-size: 1.18em;
+      letter-spacing: 1px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 6px;
+      font-size: 1.07em;
+      background: transparent;
+    }
+    th, td {
+      padding: 12px 8px;
+      text-align: center;
+      border-bottom: 1px solid #3a445e;
+    }
+    th {
+      background: #2a3253;
+      color: #4faaff;
+    }
+    tr:hover td {
+      background: #334177;
+      transition: 0.2s;
+    }
+    @media (max-width: 600px) {
+      .section { padding: 10px 2px 6px 2px; }
+      th, td { font-size: 0.97em; padding: 8px 2px; }
+    }
+
+    .blue-btn {
+  background-color: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 28px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 14px;
+  margin-top: 10px;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.15);
+  transition: background 0.3s, transform 0.2s;
+}
+.blue-btn:hover {
+  background-color: #0d47a1;
+  transform: scale(1.07);
+}
+  </style>
+</head>
+<body>
+  <div class="section">
+    <h2></h2>
+    <table>
+      <thead>
+        <tr>
+          <th>الرمز</th>
+          <th>المعنى/الاختصار</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>0-1</td><td>استراحة</td></tr>
+        <tr><td>0-2</td><td>إشارة واضحة</td></tr>
+        <tr><td>0-3</td><td>التأكد من إشارة الراديو</td></tr>
+        <tr><td>0-4</td><td>اصطفاف عسكري</td></tr>
+        <tr><td>0-5</td><td>الشرطي مشغول</td></tr>
+        <tr><td>0-6</td><td>كرر البلاغ</td></tr>
+        <tr><td>0-7</td><td>تسجيل خروج</td></tr>
+        <tr><td>0-8</td><td>تسجيل دخول</td></tr>
+        <tr><td>0-9</td><td>التوجه إلى القسم</td></tr>
+        <tr><td>0-10</td><td>تم التعامل مع الحالة</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="height: 40px;"></div>
+
+  <div class="section">
+    <h2></h2>
+    <table>
+      <thead>
+        <tr>
+          <th>الكود (البلاغ)</th>
+          <th>المعنى/الاختصار</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Code 0</td><td>استنفار امني</td></tr>
+        <tr><td>Code 1</td><td>المنطقة غير امنة</td></tr>
+        <tr><td>Code 2</td><td>سفتي بدون صوت</td></tr>
+        <tr><td>Code 3</td><td>سفتي صوت</td></tr>
+        <tr><td>Code 4</td><td>المنطقة امنة</td> </tr>
+        <tr><td>Code 5</td><td>التوجه للقسم</td></tr>
+        <tr><td>Code 6</td><td>تفتيش المنطقة</td></tr>
+        <tr><td>Code 7</td><td>مسح بصمات و رفع تقرير   </td></tr>
+
+      </tbody>
+    </table>
+  </div>
+  
+  <div style="height: 40px;"></div>
+
+  <div class="section">
+    <h2></h2>
+    <table>
+      <thead>
+        <tr>
+          <th>الرمز</th>
+          <th>المعنى</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>10-0</td><td>بلاغ كاذب</td></tr>
+        <tr><td>10-1</td><td>مطاردة مطلوبة</td></tr>
+        <tr><td>10-2</td><td>غير صحيح</td></tr>
+        <tr><td>10-3</td><td>استهداف دوري</td></tr>
+        <tr><td>10-4</td><td>استلمت</td></tr>
+        <tr><td>10-5</td><td>سرقة سيارة</td></tr>
+        <tr><td>10-6</td><td>سرقة منزل</td></tr>
+        <tr><td>10-7</td><td>سرقة بقالة </td></tr>
+        <tr><td>10-8</td><td>سرقة مجوهرات</td></tr>
+        <tr><td>10-9</td><td> سرقة مصرف</td></tr>
+        <tr><td>10-10</td><td>سرقة البنك المركزي </td></tr>
+        <tr><td>10-11</td><td>سرقة بنك بوليتو</td></tr>
+        <tr><td>10-12</td><td> سرقة كازينو </td></tr>
+        <tr><td>10-16</td><td>سرقة جزيرة  </td></tr>
+        <tr><td>10-17</td><td> سرقة قطار</td></tr>
+        <tr><td>10-18</td><td>مطاردة على الأقدام</td></tr>
+        <tr><td>10-20</td><td>موقعك</td></tr>
+        <tr><td>20-1</td><td>تجمع عصابات</td></tr>
+        <tr><td>20-2</td><td>تبادل إطلاق نار</td></tr>
+        <tr><td>20-3</td><td>احتاج دعم</td></tr>
+        <tr><td>20-4</td><td>الأشخاص لديهم رمينه</td></tr>
+        <tr><td>10-33</td><td>  هروب من السجن </td></tr>
+      </tbody>
+    </table>
+  </div>
+ <center>
+  <button class="blue-btn" onclick="window.location.href='table.html'">جدول الشرطة</button>
+  <button class="blue-btn" onclick="window.location.href='SHIRIF.html'">جدول الشرف</button>
+  <button class="blue-btn" onclick="window.location.href='RULES.html'">   قوانين الشرطة</button> 
+
+</center>
+
+
+</body>
+
+</html>

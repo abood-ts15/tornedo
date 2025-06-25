@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>جدول رتب الشرطة بكلمة سر للتعديل</title>
+    <style>
+        body { font-family: 'Cairo', Arial, sans-serif; background: #000; color: #fff; padding: 40px;}
+        table { width: 98%; margin: 0 auto; border-collapse: collapse; background: #222; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px #00000030;}
+        th, td { padding: 12px 8px; text-align: center; border: 1.5px solid #5fd1e7;}
+        th { background: #1976d2; color: #fff; font-size: 1.1em;}
+        .rank-title-row td { background: #16213a; color: #ffd600; font-size: 1.1em; font-weight: bold; border-bottom: 2px solid #5fd1e7;}
+        tr:nth-child(even):not(.rank-title-row) { background: #1a1a1a;}
+        tr:nth-child(odd):not(.rank-title-row) { background: #232323;}
+        .code-cell { font-family: monospace; color: #5fd1e7; font-weight: bold;}
+        .blue-btn {
+            background-color: #1976d2;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 30px;
+            margin-top: 10px;
+            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.15);
+            transition: background 0.3s, transform 0.2s;
+        }
+        .blue-btn:hover {
+            background-color: #0d47a1;
+            transform: scale(1.07);
+        }
+        td[contenteditable="true"] { background: #222 !important; outline: 2px solid #4faaff55; transition: outline 0.2s;}
+        td[contenteditable="true"]:focus { outline: 2px solid #4faaff;}
+        #password-overlay, #clear-password-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        #password-box, #clear-password-box {
+            background: #232323;
+            padding: 40px 30px 30px 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 32px #00000088;
+            text-align: center;
+        }
+        #password-box input, #clear-password-box input {
+            padding: 12px;
+            font-size: 1.1em;
+            border-radius: 7px;
+            border: 1.5px solid #1976d2;
+            margin: 12px 0 18px 0;
+            background: #191919;
+            color: #fff;
+            width: 220px;
+            text-align: center;
+        }
+        #clear-password-box input {
+            border: 1.5px solid #d21919;
+        }
+        #password-box button, #clear-password-box button {
+            padding: 10px 28px;
+            font-size: 1em;
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        #password-box button:hover {
+            background: #12509c;
+        }
+        #clear-password-box button {
+            background: #d21919;
+        }
+        #clear-password-box button:hover {
+            background: #a10d0d;
+        }
+        #clear-password-box .cancel-btn {
+            background: #555;
+            margin-right: 10px;
+        }
+        #clear-password-box .cancel-btn:hover {
+            background: #222;
+        }
+        #wrong-pass, #wrong-clear-pass {
+            color: #f44336;
+            font-size: 1em;
+            margin-top: 8px;
+            min-height: 24px;
+        }
+        #edit-btn {
+            position: fixed;
+            top: 26px;
+            left: 26px;
+            z-index: 100;
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 13px 32px;
+            font-size: 19px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.15);
+            transition: background 0.3s, transform 0.2s;
+        }
+        #edit-btn:hover {
+            background: #0d47a1;
+            transform: scale(1.07);
+        }
+    </style>
+</head>
+<body>
+    <button id="edit-btn" onclick="showPasswordBox()">تفعيل التعديل</button>
+    <div id="password-overlay">
+        <div id="password-box">
+            <h2>أدخل كلمة السر للتعديل</h2>
+            <input type="password" id="password-input" placeholder="كلمة السر" autocomplete="off" autofocus>
+            <br>
+            <button onclick="checkPassword()">دخول</button>
+            <div id="wrong-pass"></div>
+        </div>
+    </div>
+    <!-- Clear-Data Password Overlay -->
+    <div id="clear-password-overlay">
+        <div id="clear-password-box">
+            <h2>أدخل كلمة السر لمسح كل البيانات</h2>
+            <input type="password" id="clear-password-input" placeholder="كلمة السر" autocomplete="off">
+            <br>
+            <button onclick="checkClearPassword()">مسح</button>
+            <button class="cancel-btn" onclick="hideClearPasswordBox()">إلغاء</button>
+            <div id="wrong-clear-pass"></div>
+        </div>
+    </div>
+    <center><h1 id="table-top">POLICE  DATA</h1></center>
+    <table id="editable-table">
+        <!-- ... محتوى الجدول كما في ملفك الأصلي ... -->
+        <!-- لا تغيير على محتوى الجدول -->
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Rank</th>
+            <th>POINT</th>
+            <th>Courses</th>
+            <th>Discord ID</th>
+            <th>vacation</th>
+            <th>promotion</th>
+        </tr>
+        <!-- Police Chief & Deputy Chief -->
+        <tr class="rank-title-row"><td colspan="8">Police Chief &amp; Deputy Chief</td></tr>
+        <tr><td class="code-cell" contenteditable="false">A-1</td><td contenteditable="false"></td><td contenteditable="false">Police Chief</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">A-2</td><td contenteditable="false"></td><td contenteditable="false">Deputy Chief</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <!-- High Commander -->
+        <tr class="rank-title-row"><td colspan="8">High Commander</td></tr>
+        <tr><td class="code-cell" contenteditable="false">P-0</td><td contenteditable="false"></td><td contenteditable="false">High Commander</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">P-1</td><td contenteditable="false"></td><td contenteditable="false">High Commander</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">P-2</td><td contenteditable="false"></td><td contenteditable="false">High Commander</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">P-3</td><td contenteditable="false"></td><td contenteditable="false">High Commander</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">P-4</td><td contenteditable="false"></td><td contenteditable="false">High Commander</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">P-5</td><td contenteditable="false"></td><td contenteditable="false">High Commander</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <!-- LSPD Chief & Deputy LSPD Chief -->
+        <tr class="rank-title-row"><td colspan="8">LSPD Chief &amp; Deputy LSPD Chief</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-1</td><td contenteditable="false"></td><td contenteditable="false">LSPD Chief</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-2</td><td contenteditable="false"></td><td contenteditable="false">Deputy LSPD Chief</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <!-- Colonel -->
+        <tr class="rank-title-row"><td colspan="8">Colonel</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-3</td><td contenteditable="false"></td><td contenteditable="false">Colonel</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-4</td><td contenteditable="false"></td><td contenteditable="false">Colonel</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-5</td><td contenteditable="false"></td><td contenteditable="false">Colonel</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <!-- Major -->
+        <tr class="rank-title-row"><td colspan="8">Major</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-6</td><td contenteditable="false"></td><td contenteditable="false">Major</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-7</td><td contenteditable="false"></td><td contenteditable="false">Major</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-8</td><td contenteditable="false"></td><td contenteditable="false">Major</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-9</td><td contenteditable="false"></td><td contenteditable="false">Major</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <!-- Captain -->
+        <tr class="rank-title-row"><td colspan="8">Captain</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-10</td><td contenteditable="false"></td><td contenteditable="false">Captain</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-11</td><td contenteditable="false"></td><td contenteditable="false">Captain</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-12</td><td contenteditable="false"></td><td contenteditable="false">Captain</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <!-- FIRST Lieutenant -->
+        <tr class="rank-title-row"><td colspan="8">FIRST Lieutenant</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-13</td><td contenteditable="false"></td><td contenteditable="false">FIRST Lieutenant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-14</td><td contenteditable="false"></td><td contenteditable="false">FIRST Lieutenant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-15</td><td contenteditable="false"></td><td contenteditable="false">FIRST Lieutenant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-16</td><td contenteditable="false"></td><td contenteditable="false">FIRST Lieutenant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-17</td><td contenteditable="false"></td><td contenteditable="false">FIRST Lieutenant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <!-- Lieutenant -->
+        <tr class="rank-title-row"><td colspan="8">Lieutenant</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-18</td><td contenteditable="false"></td><td contenteditable="false">Lieutenant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-19</td><td contenteditable="false"></td><td contenteditable="false">Lieutenant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-20</td><td contenteditable="false"></td><td contenteditable="false">Lieutenant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-21</td><td contenteditable="false"></td><td contenteditable="false">Lieutenant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-22</td><td contenteditable="false"></td><td contenteditable="false">Lieutenant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <tr><td class="code-cell" contenteditable="false">C-23</td><td contenteditable="false"></td><td contenteditable="false">Lieutenant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">اثبات جدارة</td></tr>
+        <!-- Staff Sergeant -->
+        <tr class="rank-title-row"><td colspan="8">Staff Sergeant</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-1</td><td contenteditable="false"></td><td contenteditable="false">Staff Sergeant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">1000</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-2</td><td contenteditable="false"></td><td contenteditable="false">Staff Sergeant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">1000</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-3</td><td contenteditable="false"></td><td contenteditable="false">Staff Sergeant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">1000</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-4</td><td contenteditable="false"></td><td contenteditable="false">Staff Sergeant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">1000</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-5</td><td contenteditable="false"></td><td contenteditable="false">Staff Sergeant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">1000</td></tr>
+        <!-- First Sergeant -->
+        <tr class="rank-title-row"><td colspan="8">First Sergeant</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-16</td><td contenteditable="false"></td><td contenteditable="false">First Sergeant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">800</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-17</td><td contenteditable="false"></td><td contenteditable="false">First Sergeant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">800</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-18</td><td contenteditable="false"></td><td contenteditable="false">First Sergeant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">800</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-19</td><td contenteditable="false"></td><td contenteditable="false">First Sergeant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">800</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-20</td><td contenteditable="false"></td><td contenteditable="false">First Sergeant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">800</td></tr>
+        <!-- Sergeant -->
+        <tr class="rank-title-row"><td colspan="8">Sergeant</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-30</td><td contenteditable="false"></td><td contenteditable="false">Sergeant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">650</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-31</td><td contenteditable="false"></td><td contenteditable="false">Sergeant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">650</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-32</td><td contenteditable="false"></td><td contenteditable="false">Sergeant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">650</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-33</td><td contenteditable="false"></td><td contenteditable="false">Sergeant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">650</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-34</td><td contenteditable="false"></td><td contenteditable="false">Sergeant</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">650</td></tr>
+        <!-- Senior Officer -->
+        <tr class="rank-title-row"><td colspan="8">Senior Officer</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-40</td><td contenteditable="false"></td><td contenteditable="false">Senior Officer</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">575</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-41</td><td contenteditable="false"></td><td contenteditable="false">Senior Officer</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">575</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-42</td><td contenteditable="false"></td><td contenteditable="false">Senior Officer</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">575</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-43</td><td contenteditable="false"></td><td contenteditable="false">Senior Officer</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">575</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-44</td><td contenteditable="false"></td><td contenteditable="false">Senior Officer</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">575</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-45</td><td contenteditable="false"></td><td contenteditable="false">Senior Officer</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">575</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-46</td><td contenteditable="false"></td><td contenteditable="false">Senior Officer</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">575</td></tr>
+        <!-- Officer III -->
+        <tr class="rank-title-row"><td colspan="8">Officer III</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-50</td><td contenteditable="false"></td><td contenteditable="false">Officer III</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">450</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-51</td><td contenteditable="false"></td><td contenteditable="false">Officer III</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">450</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-52</td><td contenteditable="false"></td><td contenteditable="false">Officer III</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">450</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-53</td><td contenteditable="false"></td><td contenteditable="false">Officer III</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">450</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-54</td><td contenteditable="false"></td><td contenteditable="false">Officer III</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">450</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-55</td><td contenteditable="false"></td><td contenteditable="false">Officer III</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">450</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-56</td><td contenteditable="false"></td><td contenteditable="false">Officer III</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">450</td></tr>
+        <!-- Officer II -->
+        <tr class="rank-title-row"><td colspan="8">Officer II</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-65</td><td contenteditable="false"></td><td contenteditable="false">Officer II</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">300</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-66</td><td contenteditable="false"></td><td contenteditable="false">Officer II</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">300</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-67</td><td contenteditable="false"></td><td contenteditable="false">Officer II</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">300</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-68</td><td contenteditable="false"></td><td contenteditable="false">Officer II</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">300</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-69</td><td contenteditable="false"></td><td contenteditable="false">Officer II</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">300</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-70</td><td contenteditable="false"></td><td contenteditable="false">Officer II</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">300</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-71</td><td contenteditable="false"></td><td contenteditable="false">Officer II</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">300</td></tr>
+        <!-- Officer I -->
+        <tr class="rank-title-row"><td colspan="8">Officer I</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-80</td><td contenteditable="false"></td><td contenteditable="false">Officer I</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">150</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-81</td><td contenteditable="false"></td><td contenteditable="false">Officer I</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">150</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-82</td><td contenteditable="false"></td><td contenteditable="false">Officer I</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">150</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-83</td><td contenteditable="false"></td><td contenteditable="false">Officer I</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">150</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-84</td><td contenteditable="false"></td><td contenteditable="false">Officer I</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">150</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-85</td><td contenteditable="false"></td><td contenteditable="false">Officer I</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">150</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-86</td><td contenteditable="false"></td><td contenteditable="false">Officer I</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">150</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-87</td><td contenteditable="false"></td><td contenteditable="false">Officer I</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">150</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-88</td><td contenteditable="false"></td><td contenteditable="false">Officer I</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">150</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-89</td><td contenteditable="false"></td><td contenteditable="false">Officer I</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">150</td></tr>
+        <!-- Cadet -->
+        <tr class="rank-title-row"><td colspan="8">Cadet</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-100</td><td contenteditable="false"></td><td contenteditable="false">Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">70</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-101</td><td contenteditable="false"></td><td contenteditable="false">Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">70</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-102</td><td contenteditable="false"></td><td contenteditable="false">Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">70</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-103</td><td contenteditable="false"></td><td contenteditable="false">Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">70</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-104</td><td contenteditable="false"></td><td contenteditable="false">Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">70</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-105</td><td contenteditable="false"></td><td contenteditable="false">Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">70</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-106</td><td contenteditable="false"></td><td contenteditable="false">Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">70</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-107</td><td contenteditable="false"></td><td contenteditable="false">Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">70</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-108</td><td contenteditable="false"></td><td contenteditable="false">Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">70</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-109</td><td contenteditable="false"></td><td contenteditable="false">Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">70</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-110</td><td contenteditable="false"></td><td contenteditable="false">Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">70</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-111</td><td contenteditable="false"></td><td contenteditable="false">Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">70</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-112</td><td contenteditable="false"></td><td contenteditable="false">Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">70</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-113</td><td contenteditable="false"></td><td contenteditable="false">Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">70</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-114</td><td contenteditable="false"></td><td contenteditable="false">Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">70</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-115</td><td contenteditable="false"></td><td contenteditable="false">Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">70</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-116</td><td contenteditable="false"></td><td contenteditable="false">Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">70</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-117</td><td contenteditable="false"></td><td contenteditable="false">Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">70</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-118</td><td contenteditable="false"></td><td contenteditable="false">Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">70</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-119</td><td contenteditable="false"></td><td contenteditable="false">Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">70</td></tr>
+        <!-- Solo Cadet -->
+        <tr class="rank-title-row"><td colspan="8">Solo Cadet</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-130</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-131</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-132</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-133</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-134</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-135</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-136</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-137</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-138</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-139</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-140</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-141</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-142</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-143</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-144</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-145</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-146</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-147</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-148</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-149</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-150</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-151</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-152</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-153</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-154</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-155</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-156</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-157</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-158</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+        <tr><td class="code-cell" contenteditable="false">U-159</td><td contenteditable="false"></td><td contenteditable="false">Solo Cadet</td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false"></td><td contenteditable="false">0</td></tr>
+    </table>
+    <center>
+        <button class="blue-btn" onclick="window.location.href='SHIRIF.html'">  جدول الشرف</button> 
+        <button class="blue-btn" onclick="window.location.href='RULES.html'">   قوانين الشرطة</button> 
+        <button class="blue-btn" onclick="window.location.href='police.html'">البروتوكولات</button>
+        <button class="blue-btn" onclick="showClearPasswordBox()">مسح جميع التعديلات</button>
+
+    </center>
+    <script>
+    // كلمة السر المطلوبة (غيّرها كما تشاء)
+    const TABLE_PASSWORD = "12345";
+    const CLEAR_PASSWORD = "54321"; // كلمة سر لمسح البيانات
+
+    function setEditables(state) {
+        document.querySelectorAll('#editable-table td').forEach(td => {
+            if (!td.parentElement.classList.contains('rank-title-row')) {
+                td.setAttribute('contenteditable', state ? 'true' : 'false');
+            }
+        });
+    }
+    setEditables(false);
+
+    function showPasswordBox() {
+        document.getElementById('password-overlay').style.display = 'flex';
+        document.getElementById('password-input').value = '';
+        document.getElementById('wrong-pass').textContent = '';
+        setTimeout(()=>{document.getElementById('password-input').focus();}, 200);
+    }
+
+    function checkPassword() {
+        const input = document.getElementById('password-input').value;
+        const msg = document.getElementById('wrong-pass');
+        if (input === TABLE_PASSWORD) {
+            setEditables(true);
+            document.getElementById('password-overlay').style.display = 'none';
+        } else {
+            msg.textContent = "كلمة السر غير صحيحة!";
+        }
+    }
+
+    document.getElementById('password-input').addEventListener('keydown', function(e){
+      if (e.key === "Enter") checkPassword();
+    });
+
+    // التخزين التلقائي
+    const storageKey = 'policeRanksTableData';
+    window.onload = function() {
+        // عرض محتوى الجدول
+        const table = document.getElementById('editable-table');
+        const saved = localStorage.getItem(storageKey);
+        if (saved) {
+            const arr = JSON.parse(saved);
+            let i = 0;
+            table.querySelectorAll('tr').forEach((row, rowIndex) => {
+                if (rowIndex === 0 || row.classList.contains('rank-title-row')) return;
+                row.querySelectorAll('td').forEach((cell, colIndex) => {
+                    if (arr[i] && arr[i][colIndex] !== undefined) {
+                        cell.textContent = arr[i][colIndex];
+                    }
+                });
+                if(!row.classList.contains('rank-title-row')) i++;
+            });
+        }
+        setEditables(false); // بعد الاسترجاع: اجعلها قراءة فقط
+    };
+    document.getElementById('editable-table').addEventListener('input', function() {
+        const data = [];
+        this.querySelectorAll('tr').forEach((row, rowIndex) => {
+            if (rowIndex === 0 || row.classList.contains('rank-title-row')) return;
+            const rowData = [];
+            row.querySelectorAll('td').forEach(cell => {
+                rowData.push(cell.textContent);
+            });
+            data.push(rowData);
+        });
+        localStorage.setItem(storageKey, JSON.stringify(data));
+    });
+
+    // كلمة سر لمسح جميع التعديلات
+    function showClearPasswordBox() {
+        document.getElementById('clear-password-overlay').style.display = 'flex';
+        document.getElementById('clear-password-input').value = '';
+        document.getElementById('wrong-clear-pass').textContent = '';
+        setTimeout(()=>{document.getElementById('clear-password-input').focus();}, 200);
+    }
+    function checkClearPassword() {
+        const input = document.getElementById('clear-password-input').value;
+        const msg = document.getElementById('wrong-clear-pass');
+        if (input === CLEAR_PASSWORD) {
+            localStorage.removeItem(storageKey);
+            document.getElementById('clear-password-overlay').style.display = 'none';
+            window.location.reload();
+        } else {
+            msg.textContent = "كلمة السر غير صحيحة!";
+        }
+    }
+    function hideClearPasswordBox() {
+        document.getElementById('clear-password-overlay').style.display = 'none';
+    }
+    document.getElementById('clear-password-input').addEventListener('keydown', function(e){
+      if (e.key === "Enter") checkClearPassword();
+    });
+    </script>
+</body>
+</html>
